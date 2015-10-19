@@ -8,7 +8,6 @@ import java.util.List;
 
 public class IDS {
 	
-	
 	public static void main(String args[])
 	{
 	
@@ -17,6 +16,7 @@ public class IDS {
 		String username = null;
 		int days = 0;
 		
+		//Check if the argument is input correctly
 		if(args.length == 4)
 		{
 			eventFile = args[0];
@@ -35,18 +35,26 @@ public class IDS {
 		System.out.println("User "+username);
 		System.out.println("Days "+days);
 		
+		ReadFile(eventFile,statFile);
+		
+		
+	}
+	
+	public static void ReadFile(String eventFile, String StatsFile)
+	{
 		try {
 			
+			//Read the Event.txt
 			FileInputStream EventIn = new FileInputStream(eventFile);
 			BufferedReader buff = new BufferedReader(new InputStreamReader(EventIn));
 			
 			String strLine;
 			
-			
-			
+			//Create a Event object list to store every event
 			List<EventsObject> EventList = new ArrayList<EventsObject>();
 			
 			
+			//Read in information
 			while ((strLine = buff.readLine()) != null)   {
 				  
 				  if(strLine.indexOf(":")>=0)
@@ -68,11 +76,14 @@ public class IDS {
 				
 			}
 			
-			FileInputStream StatsIn = new FileInputStream(statFile);
+			//Read in the Stats.txt
+			FileInputStream StatsIn = new FileInputStream(StatsFile);
 			BufferedReader buffStat = new BufferedReader(new InputStreamReader(StatsIn));
 			
+			//Create a Stats object list to store event information
 			List<StatsObject> StatsList = new ArrayList<StatsObject>();
 			
+			//Read information
 			while ((strLine = buffStat.readLine()) != null)   {
 				  
 				  if(strLine.indexOf(":")>=0)
@@ -120,8 +131,7 @@ public class IDS {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
 	}
+	
+	
 }
