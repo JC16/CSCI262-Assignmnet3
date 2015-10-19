@@ -17,17 +17,11 @@ public class IDS {
 		String username = null;
 		int days = 0;
 		
-		
-		/*eventFile = args[0];
-		statFile = args[1];
-		username = args[2];
-		days = Integer.parseInt(args[3]);*/
-		
 		if(args.length == 4)
 		{
 			eventFile = args[0];
-			statFile = args[1];
-			username = args[2];
+			username = args[1];
+			statFile = args[2];
 			days = Integer.parseInt(args[3]);
 		}
 		else
@@ -74,7 +68,31 @@ public class IDS {
 				
 			}
 			
+			FileInputStream StatsIn = new FileInputStream(statFile);
+			BufferedReader buffStat = new BufferedReader(new InputStreamReader(StatsIn));
+			
+			List<StatsObject> StatsList = new ArrayList<StatsObject>();
+			
+			while ((strLine = buffStat.readLine()) != null)   {
+				  
+				  if(strLine.indexOf(":")>=0)
+				  {
+					  String separator[] = strLine.split(":");
+					  
+					  StatsObject stats = new StatsObject();
+					  
+					  stats.setEventName(separator[0]);
+					  stats.setMean(Double.parseDouble(separator[1]));
+					  stats.setSD(Double.parseDouble(separator[2]));
+					  
+					  StatsList.add(stats);
+					  
+				  }
+				
+			}
+			
 			buff.close();
+			buffStat.close();
 			
 			
 			for(int i=0; i<EventList.size(); i++)
@@ -85,6 +103,13 @@ public class IDS {
 				System.out.println(EventList.get(i).getMaximum());
 				System.out.println(EventList.get(i).getUnits());
 				System.out.println(EventList.get(i).getWeight());
+			}
+			
+			for(int i=0; i<StatsList.size(); i++)
+			{
+				System.out.println(StatsList.get(i).getEventName());
+				System.out.println(StatsList.get(i).getMean());
+				System.out.println(StatsList.get(i).getSD());
 			}
 			
 			
