@@ -7,6 +7,7 @@ public class EventsObject {
 	String maximum;
 	String units;
 	int weight;
+	String something;
 	
 	public String getEventname() {
 		return Eventname;
@@ -24,6 +25,14 @@ public class EventsObject {
 		this.type = type;
 	}
 	
+	public String getSomething() {
+		return something;
+	}
+
+	public void setSomething(String something) {
+		this.something = something;
+	}
+
 	public String getMinimum() {
 		return minimum;
 	}
