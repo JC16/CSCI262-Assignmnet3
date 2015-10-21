@@ -106,6 +106,10 @@ public class IDS {
 			
 			AE.createLog();
 			
+			AnalysisEngine AnE = new AnalysisEngine(days, EventList, StatsList);
+			
+			AnE.readAnalysis();
+			
 				
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

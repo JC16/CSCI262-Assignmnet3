@@ -38,11 +38,11 @@ public class ActivityEngine {
 							int loginNum = in.nextInt((int)(StatsList.get(j).mean + 2*StatsList.get(j).SD));	//mean + 2*standard deviation + 1
 							if(loginNum >= (int)(StatsList.get(j).mean - 2*StatsList.get(j).SD)){				//mean - 2*standard deviation
 								out.println("Day" + dayCount);
+								out.println(loginNum);	//total recorded number
 								for(int i=0;i<loginNum; i++ ){
 									out.println(EventList.get(j).Eventname);
 								}
 								out.println();
-								out.println(loginNum);	//total recorded number
 								out.println();
 								dayCount++;
 							}
@@ -66,6 +66,7 @@ public class ActivityEngine {
 						int onlineNum = in.nextInt((int)(StatsList.get(j).mean + 2*StatsList.get(j).SD));	//mean + 2*standard deviation + 1
 						if(onlineNum >= (int)(StatsList.get(j).mean - 2*StatsList.get(j).SD)){				//mean - 2*standard deviation
 							out.println("Day" + dayCount);	//write day info
+							out.println(onlineNum);		//write recorded event number
 							for(int i=0;i<onlineNum; i++ ){
 								double onlineData = in.nextFloat() * (int)(StatsList.get(j).mean + 2*StatsList.get(j).SD);	//generate random number less than mean + 2*standard deviation
 								double value = Double.valueOf(String.format("%.2f", onlineData));	//keep two digital number
@@ -73,7 +74,6 @@ public class ActivityEngine {
 								out.println(value);	//write value to log file
 							}
 							out.println();
-							out.println(onlineNum);		//write recorded event number
 							out.println(String.format("%.2f", totalPerDay));	//write total value per day
 							out.println();
 							dayCount++;
