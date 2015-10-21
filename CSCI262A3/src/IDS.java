@@ -110,6 +110,8 @@ public class IDS {
 			
 			AnE.readAnalysis();
 			
+			AnE.printNewSD();
+			
 				
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

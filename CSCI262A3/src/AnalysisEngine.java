@@ -3,6 +3,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,10 @@ public class AnalysisEngine {
 	int days;
 	List<EventsObject> EventList;
 	List<StatsObject> StatsList;
+	double mean;
+	double SD;
+	
+	List<StatsObject> outputList = new ArrayList<StatsObject>();
 	
 	
 	public AnalysisEngine(int days, List<EventsObject> eventList, List<StatsObject> statsList) {
@@ -21,6 +26,7 @@ public class AnalysisEngine {
 		StatsList = statsList;
 	}
 	
+	//Read the log file and calculate the mean and SD
 	public void readAnalysis()
 	{
 		try {
@@ -51,6 +57,13 @@ public class AnalysisEngine {
 					
 					calculateSD(sampleData);
 					
+					StatsObject newStats = new StatsObject();
+					newStats.setEventName(EventList.get(j).Eventname);
+					newStats.setMean(mean);
+					newStats.setSD(SD);
+					
+					outputList.add(newStats);
+					
 				}
 			}
 		} catch (FileNotFoundException e) {
@@ -62,6 +75,7 @@ public class AnalysisEngine {
 		}
 	}
 	
+	//read the line in the file check if it's number
 	public boolean isNumeric(String str)
 	{
 		try  
@@ -75,9 +89,9 @@ public class AnalysisEngine {
 		  return true;
 	}
 	
+	//Calculate the mean and standard deviation
 	public void calculateSD(List<Double> list)
 	{
-		
 		double mean = 0.0;
 		
 		for(int i=0; i<list.size(); i++)
@@ -85,10 +99,7 @@ public class AnalysisEngine {
 			mean += list.get(i);
 		}
 		
-		System.out.println(mean);
-		
 		mean = mean/(double)(list.size());
-		
 		
 		double SD = 0.0;
 		
@@ -102,7 +113,33 @@ public class AnalysisEngine {
 		System.out.println(new DecimalFormat("##.##").format(mean));
 		System.out.println(new DecimalFormat("##.##").format(SD));
 		
+		this.mean = mean;
+		
+		this.SD = SD;
 		
 	}
+	
+	public void printNewSD()
+	{
+		try
+		{
+			PrintWriter out = new PrintWriter("NewStats.txt");
+			
+			for(int i=0; i<outputList.size(); i++)
+			{		
+					out.println(outputList.get(i).eventName+":"+
+							new DecimalFormat("##.##").format(outputList.get(i).mean)
+							+":"+new DecimalFormat("##.##").format(outputList.get(i).SD));	
+			}
+					
+			out.close();
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	
 }
