@@ -30,17 +30,12 @@ public class IDS {
 			System.exit(0);
 		}
 		
-		System.out.println("Event "+eventFile);
-		System.out.println("Stat "+statFile);
-		System.out.println("User "+username);
-		System.out.println("Days "+days);
-		
-		ReadFile(eventFile,statFile);
+		ReadFile(eventFile,statFile, days);
 		
 		
 	}
 	
-	public static void ReadFile(String eventFile, String StatsFile)
+	public static void ReadFile(String eventFile, String StatsFile, int days)
 	{
 		try {
 			
@@ -76,6 +71,7 @@ public class IDS {
 				
 			}
 			
+			
 			//Read in the Stats.txt
 			FileInputStream StatsIn = new FileInputStream(StatsFile);
 			BufferedReader buffStat = new BufferedReader(new InputStreamReader(StatsIn));
@@ -106,24 +102,11 @@ public class IDS {
 			buffStat.close();
 			
 			
-			for(int i=0; i<EventList.size(); i++)
-			{
-				System.out.println(EventList.get(i).getEventname());
-				System.out.println(EventList.get(i).getType());
-				System.out.println(EventList.get(i).getMinimum());
-				System.out.println(EventList.get(i).getMaximum());
-				System.out.println(EventList.get(i).getUnits());
-				System.out.println(EventList.get(i).getWeight());
-			}
+			ActivityEngine AE = new ActivityEngine(days, EventList, StatsList);
 			
-			for(int i=0; i<StatsList.size(); i++)
-			{
-				System.out.println(StatsList.get(i).getEventName());
-				System.out.println(StatsList.get(i).getMean());
-				System.out.println(StatsList.get(i).getSD());
-			}
+			AE.createLog();
 			
-			
+				
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
