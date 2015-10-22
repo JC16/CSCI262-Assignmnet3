@@ -40,7 +40,7 @@ public class AnalysisEngine {
 				{
 					FileInputStream EventIn;
 					
-						EventIn = new FileInputStream(EventList.get(j).Eventname+".log");
+					EventIn = new FileInputStream(EventList.get(j).Eventname+".log");
 					
 					BufferedReader buff = new BufferedReader(new InputStreamReader(EventIn));
 					
@@ -64,7 +64,89 @@ public class AnalysisEngine {
 					
 					outputList.add(newStats);
 					
+					System.out.println(EventList.get(j).getEventname());
+					
+					AlterEngine ALE = new AlterEngine(sampleData,EventList.get(j).getWeight(),newStats);
+					
+					ALE.calculateThreshold();
+					
+					
 				}
+				
+				else if(EventList.get(j).type.equalsIgnoreCase("C"))
+				{
+					FileInputStream EventIn;
+					
+					EventIn = new FileInputStream(EventList.get(j).Eventname+".log");
+					
+					BufferedReader buff = new BufferedReader(new InputStreamReader(EventIn));
+					
+					String strLine;
+					
+					while ((strLine = buff.readLine()) != null)   {
+						
+						if(isNumeric(strLine))
+						{
+							sampleData.add(Double.parseDouble(strLine));
+						}
+						
+					}
+					
+					calculateSD(sampleData);
+					
+					StatsObject newStats = new StatsObject();
+					newStats.setEventName(EventList.get(j).Eventname);
+					newStats.setMean(mean);
+					newStats.setSD(SD);
+					
+					outputList.add(newStats);
+					
+					System.out.println(EventList.get(j).getEventname());
+					
+					AlterEngine ALE = new AlterEngine(sampleData,EventList.get(j).getWeight(),newStats);
+					
+					ALE.calculateThreshold();
+					
+					
+				}
+				
+				else if(EventList.get(j).type.equalsIgnoreCase("E"))
+				{
+					FileInputStream EventIn;
+					
+					EventIn = new FileInputStream(EventList.get(j).Eventname+".log");
+					
+					BufferedReader buff = new BufferedReader(new InputStreamReader(EventIn));
+					
+					String strLine;
+					
+					while ((strLine = buff.readLine()) != null)   {
+						
+						if(isNumeric(strLine))
+						{
+							sampleData.add(Double.parseDouble(strLine));
+						}
+						
+					}
+					
+					calculateSD(sampleData);
+					
+					StatsObject newStats = new StatsObject();
+					newStats.setEventName(EventList.get(j).Eventname);
+					newStats.setMean(mean);
+					newStats.setSD(SD);
+					
+					outputList.add(newStats);
+					
+					System.out.println(EventList.get(j).getEventname());
+					
+					AlterEngine ALE = new AlterEngine(sampleData,EventList.get(j).getWeight(),newStats);
+					
+					ALE.calculateThreshold();
+					
+					
+				}
+				
 			}
 		} catch (FileNotFoundException e) {
 			
@@ -80,7 +162,7 @@ public class AnalysisEngine {
 	{
 		try  
 		  {  
-		    int d = Integer.parseInt(str);  
+		    double d = Double.parseDouble(str);  
 		  }  
 		  catch(NumberFormatException nfe)  
 		  {  
@@ -109,9 +191,6 @@ public class AnalysisEngine {
 		}
 		
 		SD = Math.sqrt(SD/(double)(list.size()-1));
-		
-		System.out.println(new DecimalFormat("##.##").format(mean));
-		System.out.println(new DecimalFormat("##.##").format(SD));
 		
 		this.mean = mean;
 		

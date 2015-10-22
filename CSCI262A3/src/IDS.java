@@ -16,6 +16,7 @@ public class IDS {
 		String username = null;
 		int days = 0;
 		
+		
 		//Check if the argument is input correctly
 		if(args.length == 4)
 		{
@@ -100,7 +101,6 @@ public class IDS {
 			
 			buff.close();
 			buffStat.close();
-			
 			
 			ActivityEngine AE = new ActivityEngine(days, EventList, StatsList);
 			
