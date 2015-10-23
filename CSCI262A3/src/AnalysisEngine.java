@@ -15,10 +15,12 @@ public class AnalysisEngine {
 	List<StatsObject> StatsList;
 	double mean;
 	double SD;
+	int eventCount = 0;
 	
 	List<StatsObject> outputList = new ArrayList<StatsObject>();
+	List<Double> sampleData = new ArrayList<Double>();
 	
-	
+	//The constructor of the class 
 	public AnalysisEngine(int days, List<EventsObject> eventList, List<StatsObject> statsList) {
 		super();
 		this.days = days;
@@ -29,23 +31,31 @@ public class AnalysisEngine {
 	//Read the log file and calculate the mean and SD
 	public void readAnalysis()
 	{
+		
+		System.out.println("Generate log file completed start analysis");
+		
 		try {
+			
+			//List<Double> sampleData = new ArrayList<Double>();
+			
 			for(int j=0; j<EventList.size(); j++)
 			{
 				//Check the event type
 				
-				List<Double> sampleData = new ArrayList<Double>();
-				
+				//We read in the event log file by the event type
 				if(EventList.get(j).type.equalsIgnoreCase("D"))
 				{
 					FileInputStream EventIn;
 					
+					//Write the new log file
 					EventIn = new FileInputStream(EventList.get(j).Eventname+".log");
 					
+					//Create a buffer for read in the line
 					BufferedReader buff = new BufferedReader(new InputStreamReader(EventIn));
 					
 					String strLine;
 					
+					//Read in the data from the log file
 					while ((strLine = buff.readLine()) != null)   {
 						
 						if(isNumeric(strLine))
@@ -55,34 +65,35 @@ public class AnalysisEngine {
 						
 					}
 					
-					calculateSD(sampleData);
+					//Calculate the mean and standard deviation
+					calculateSD(sampleData, days, eventCount);
+					eventCount++;
 					
+					//Create a new stats object for store new mean and standard deviation
 					StatsObject newStats = new StatsObject();
 					newStats.setEventName(EventList.get(j).Eventname);
 					newStats.setMean(mean);
 					newStats.setSD(SD);
 					
+					//Create the new list for new stats object
 					outputList.add(newStats);
 					
-					System.out.println(EventList.get(j).getEventname());
-					
-					AlterEngine ALE = new AlterEngine(sampleData,EventList.get(j).getWeight(),newStats);
-					
-					ALE.calculateThreshold();
-					
-					
 				}
+				
 				
 				else if(EventList.get(j).type.equalsIgnoreCase("C"))
 				{
 					FileInputStream EventIn;
 					
+					//Write the new log file
 					EventIn = new FileInputStream(EventList.get(j).Eventname+".log");
 					
+					//Create a buffer for read in the line
 					BufferedReader buff = new BufferedReader(new InputStreamReader(EventIn));
 					
 					String strLine;
 					
+					//Read in the data from the log file
 					while ((strLine = buff.readLine()) != null)   {
 						
 						if(isNumeric(strLine))
@@ -92,21 +103,18 @@ public class AnalysisEngine {
 						
 					}
 					
-					calculateSD(sampleData);
+					//Calculate the mean and standard deviation
+					calculateSD(sampleData, days, eventCount);
+					eventCount++;
 					
+					//Create a new stats object for store new mean and standard deviation
 					StatsObject newStats = new StatsObject();
 					newStats.setEventName(EventList.get(j).Eventname);
 					newStats.setMean(mean);
 					newStats.setSD(SD);
 					
+					//Create the new list for new stats object
 					outputList.add(newStats);
-					
-					System.out.println(EventList.get(j).getEventname());
-					
-					AlterEngine ALE = new AlterEngine(sampleData,EventList.get(j).getWeight(),newStats);
-					
-					ALE.calculateThreshold();
-					
 					
 				}
 				
@@ -114,40 +122,40 @@ public class AnalysisEngine {
 				{
 					FileInputStream EventIn;
 					
+					//Write the new log file
 					EventIn = new FileInputStream(EventList.get(j).Eventname+".log");
 					
+					//Create a buffer for read in the line
 					BufferedReader buff = new BufferedReader(new InputStreamReader(EventIn));
 					
 					String strLine;
 					
+					//Read in the data from the log file
 					while ((strLine = buff.readLine()) != null)   {
 						
 						if(isNumeric(strLine))
 						{
 							sampleData.add(Double.parseDouble(strLine));
 						}
-						
 					}
 					
-					calculateSD(sampleData);
+					//Calculate the mean and standard deviation
+					calculateSD(sampleData, days, eventCount);
+					eventCount++;
 					
+					//Create a new stats object for store new mean and standard deviation
 					StatsObject newStats = new StatsObject();
 					newStats.setEventName(EventList.get(j).Eventname);
 					newStats.setMean(mean);
 					newStats.setSD(SD);
 					
+					//Create the new list for new stats object
 					outputList.add(newStats);
-					
-					System.out.println(EventList.get(j).getEventname());
-					
-					AlterEngine ALE = new AlterEngine(sampleData,EventList.get(j).getWeight(),newStats);
-					
-					ALE.calculateThreshold();
-					
-					
+								
 				}
 				
 			}
+			
 		} catch (FileNotFoundException e) {
 			
 			e.printStackTrace();
@@ -161,7 +169,8 @@ public class AnalysisEngine {
 	public boolean isNumeric(String str)
 	{
 		try  
-		  {  
+		  { 
+			//Convert the number if there is an exception return false
 		    double d = Double.parseDouble(str);  
 		  }  
 		  catch(NumberFormatException nfe)  
@@ -172,25 +181,27 @@ public class AnalysisEngine {
 	}
 	
 	//Calculate the mean and standard deviation
-	public void calculateSD(List<Double> list)
+	public void calculateSD(List<Double> list, int days, int count)
 	{
 		double mean = 0.0;
 		
-		for(int i=0; i<list.size(); i++)
+		//Calculate the sum of means
+		for(int i=days*count; i<days*(count+1); i++)
 		{
 			mean += list.get(i);
 		}
 		
-		mean = mean/(double)(list.size());
+		mean = mean/(double)(days);
 		
 		double SD = 0.0;
 		
-		for(int i=0; i<list.size(); i++)
+		//Calculate the standard deviation
+		for(int i=days*count; i<days*(count+1); i++)
 		{
 			SD += (list.get(i)-mean)*(list.get(i)-mean);
 		}
 		
-		SD = Math.sqrt(SD/(double)(list.size()-1));
+		SD = Math.sqrt(SD/(double)(days-1));
 		
 		this.mean = mean;
 		
@@ -198,6 +209,7 @@ public class AnalysisEngine {
 		
 	}
 	
+	//Create a new stats file for new mean and standard deivation
 	public void printNewSD()
 	{
 		try
@@ -220,5 +232,17 @@ public class AnalysisEngine {
 		
 	}
 	
+	//Start the Alter engine for final phase
+	public void startAnalysis()
+	{
+		//Create the alter engine object
+		AlterEngine ALE = new AlterEngine(sampleData,EventList,outputList,days);
+		
+		//calculate threshold
+		ALE.calculateThreshold();
+		
+		//calculate anomaly counter
+		ALE.calculateCounter();
+	}
 	
 }

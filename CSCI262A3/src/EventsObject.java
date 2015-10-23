@@ -1,4 +1,5 @@
 
+//Event object class store the event variable
 public class EventsObject {
 	
 	String Eventname;

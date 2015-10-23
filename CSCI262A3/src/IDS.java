@@ -5,21 +5,26 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class IDS {
 	
 	public static void main(String args[])
 	{
 	
+		//Initialize the variable
 		String eventFile = null;
 		String statFile = null;
 		String username = null;
 		int days = 0;
 		
+		//Check if the user want to end the program
+		boolean endProgram = false;
 		
 		//Check if the argument is input correctly
 		if(args.length == 4)
 		{
+			//Read in the argument
 			eventFile = args[0];
 			username = args[1];
 			statFile = args[2];
@@ -31,12 +36,34 @@ public class IDS {
 			System.exit(0);
 		}
 		
-		ReadFile(eventFile,statFile, days);
+		//Read  Initial input from the document
+		InitialReadFile(eventFile,statFile, days);
 		
+		
+		while(!endProgram)
+		{
+			//Let the user input to continue the program or not
+			System.out.println("Enter Quit for end program or Continue:");
+			Scanner input = new Scanner(System.in);
+			
+			if(input.nextLine().equalsIgnoreCase("Quit"))
+			{
+				endProgram = true;
+			}
+			else
+			{
+				//Let the user input the new number of day 
+				System.out.println("Please enter the new number of days");
+				int newDay =  Integer.parseInt(input.nextLine());
+				InitialReadFile(eventFile,statFile, newDay);
+			}
+		}
+		
+		System.out.println("End of the System");
 		
 	}
 	
-	public static void ReadFile(String eventFile, String StatsFile, int days)
+	public static void InitialReadFile(String eventFile, String StatsFile, int days)
 	{
 		try {
 			
@@ -57,6 +84,7 @@ public class IDS {
 				  {
 					  String separator[] = strLine.split(":");
 					  
+					  //An event object setup all the variable
 					  EventsObject Eobject = new EventsObject();
 					  
 					  Eobject.setEventname(separator[0]);
@@ -66,6 +94,7 @@ public class IDS {
 					  Eobject.setUnits(separator[4]);
 					  Eobject.setWeight(Integer.parseInt(separator[5]));
 					  
+					  //Add the object to the list
 					  EventList.add(Eobject);
 					  
 				  }
@@ -102,15 +131,23 @@ public class IDS {
 			buff.close();
 			buffStat.close();
 			
+			//Create an activity engine object to start the next phase
 			ActivityEngine AE = new ActivityEngine(days, EventList, StatsList);
 			
+			//Create the log file for base the stats.txt file
 			AE.createLog();
 			
+			//After we create our traffic log file read in the information for analysis
 			AnalysisEngine AnE = new AnalysisEngine(days, EventList, StatsList);
 			
+			//Read in the file
 			AnE.readAnalysis();
 			
+			//Create a new stats file with our new mean and standard deviation
 			AnE.printNewSD();
+			
+			//Start for calculate the threshold and final phase
+			AnE.startAnalysis();
 			
 				
 		} catch (FileNotFoundException e) {

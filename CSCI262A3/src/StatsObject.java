@@ -1,4 +1,5 @@
 
+//Stats object  store the stats variable
 public class StatsObject {
 
 	String eventName;

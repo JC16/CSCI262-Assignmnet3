@@ -12,7 +12,6 @@ public class ActivityEngine {
 	
 	Random in = new Random();
 	
-	
 	//Constructor put the number of days and the list object to the class
 	public ActivityEngine(int days, List<EventsObject> eventList, List<StatsObject> statsList) {
 		super();
@@ -24,6 +23,8 @@ public class ActivityEngine {
 	//Create log file function
 	public void createLog()
 	{
+		System.out.println("Start generate log file ...");
+		
 		//Create log file for all events
 		for(int j=0; j<EventList.size(); j++)
 		{
@@ -31,14 +32,21 @@ public class ActivityEngine {
 			if(EventList.get(j).type.equalsIgnoreCase("D"))
 			{
 				try{
+						//Create a new file for write out all the user generate log
 						PrintWriter out = new PrintWriter(EventList.get(j).Eventname+".log");
 						boolean done = false;
 						int dayCount = 1;
 						while(!done){
-							int loginNum = in.nextInt((int)(StatsList.get(j).mean + 3*StatsList.get(j).SD));	//mean + 2*standard deviation + 1
-							if(loginNum >= (int)(StatsList.get(j).mean - 3*StatsList.get(j).SD)){				//mean - 2*standard deviation
+							//Random generate number of events
+							int loginNum = in.nextInt((int)(StatsList.get(j).mean + 2*StatsList.get(j).SD));	//mean + 2*standard deviation + 1
+							
+							//We set the range of the data from mean +- 2 standard deviation
+							if(loginNum >= (int)(StatsList.get(j).mean - 2*StatsList.get(j).SD)){				//mean - 2*standard deviation
+								
+								//Start to write the number
 								out.println("Day" + dayCount);
-								out.println(loginNum);	//total recorded number
+								//Total recorded number
+								out.println(loginNum);	
 								for(int i=0;i<loginNum; i++ ){
 									out.println(EventList.get(j).Eventname);
 								}
@@ -46,6 +54,7 @@ public class ActivityEngine {
 								out.println();
 								dayCount++;
 							}
+							//The terminate condition if the day count = the number of day
 							if(dayCount-1 == days){
 								done = true;
 								out.close();
@@ -55,6 +64,8 @@ public class ActivityEngine {
 					e.printStackTrace();
 					}
 			}
+			
+			//Check if the event is the C type
 			else if (EventList.get(j).type.equalsIgnoreCase("C"))
 			{
 				try{
@@ -62,24 +73,31 @@ public class ActivityEngine {
 					boolean done = false;
 					int dayCount = 1;
 					while(!done){
-						double totalPerDay = 0.0;	//total value per day
-						int onlineNum = in.nextInt((int)(Integer.parseInt(EventList.get(j).getMaximum())/StatsList.get(j).mean))+1;	//max value divide mean to obtain average number
+						//total value per day
+						double totalPerDay = 0.0;
+						//max value divide mean to obtain average number
+						int onlineNum = in.nextInt((int)(Integer.parseInt(EventList.get(j).getMaximum())/StatsList.get(j).mean))+1;	
 						{			
-							out.println("Day" + dayCount);	//write day info
-							out.println("Total Events per day:"+onlineNum);		//total recorded number
+							//write day info
+							out.println("Day" + dayCount);
+							//total recorded number
+							out.println("Total Events per day:"+onlineNum);		
 							for(int i=0;i<onlineNum;){
-								double onlineData = in.nextFloat() * (int)(StatsList.get(j).mean + 3*StatsList.get(j).SD);	//generate random number less than mean + 2*standard deviation
-								if (onlineData >= StatsList.get(j).mean - 3*StatsList.get(j).SD){
-									double value = Double.valueOf(String.format("%.2f", onlineData));	//keep two digital number
-									totalPerDay += value;	//update total value per day
+								//generate random number less than mean + 2*standard deviation
+								double onlineData = in.nextFloat() * (int)(StatsList.get(j).mean + 2*StatsList.get(j).SD);
+								if (onlineData >= StatsList.get(j).mean - 2*StatsList.get(j).SD){
+									//keep two digital number
+									double value = Double.valueOf(String.format("%.2f", onlineData));
+									//update total value per day
+									totalPerDay += value;
 									
 									out.println(EventList.get(j).Eventname + value);
-									//out.println(value);	//write value to log file
 									i++;
 								}
 							}
 							out.println();
-							out.println(String.format("%.2f", totalPerDay/onlineNum));	//write total value per day
+							//write total value per day
+							out.println(String.format("%.2f", totalPerDay/onlineNum));
 							out.println();
 							dayCount++;
 						}
@@ -99,37 +117,46 @@ public class ActivityEngine {
 					boolean done = false;
 					int dayCount = 1;
 					while(!done){
-						long totalPerDay = 0;	//total value per day
-						int num = in.nextInt(100)+1;	//define max 100 records per day
+						//total value per day
+						long totalPerDay = 0;
+						//define max 100 records per day
+						int num = in.nextInt(100)+1;
 						{	
-							out.println("Day" + dayCount);	//write day info
-							out.println("Total Events per day:"+num);		//total recorded number
+							//write day info
+							out.println("Day" + dayCount);
+							//total recorded number
+							out.println("Total Events per day:"+num);
 							for(int i=0;i<num;){
-								int data = in.nextInt((int)(StatsList.get(j).mean + 3*StatsList.get(j).SD));	//generate random number less than mean + 2*standard deviation
-								if(EventList.get(j).getMinimum().equals("0")){	//download event list	
-									//if (data >= StatsList.get(j).mean - 2*StatsList.get(j).SD){
-										totalPerDay += data;	//update total value per day
+								//generate random number less than mean + 2*standard deviation
+								int data = in.nextInt((int)(StatsList.get(j).mean + 2*StatsList.get(j).SD));
+								
+								//Check if the event has a minimum
+								if(EventList.get(j).getMinimum().equals("0")){	
+										//update total value per day
+										totalPerDay += data;
 										out.println(EventList.get(j).Eventname + data);
-										//out.println(value);	//write value to log file
+										
 										i++;
-									//}
 								}
-								else	//money made event
+								else	
 								{
-									if (data <= Math.abs(StatsList.get(j).mean - 3*StatsList.get(j).SD)){
-										int judgeSymbol = in.nextInt(3);
+									//If the event has no minimum we can also accept negative data
+									if (data <= Math.abs(StatsList.get(j).mean - 2*StatsList.get(j).SD)){
+										int judgeSymbol = in.nextInt(2);
 										if(judgeSymbol == 0)
 											data = -data;
 									}
-										totalPerDay += data;	//update total value per day
+										//update total value per day	
+										totalPerDay += data;	
 										out.println(EventList.get(j).Eventname + data);
-										//out.println(value);	//write value to log file
 										i++;
 									
 								}
 							}
 							out.println();
-							out.println(totalPerDay/num);	//write total value per day
+							
+							//write total value per day
+							out.println(totalPerDay/num);
 							out.println();
 							dayCount++;
 						}
